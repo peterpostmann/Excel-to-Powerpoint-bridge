@@ -150,7 +150,7 @@ Do
                                  & " /ppFileName:" & chr(34) & ppFileName & chr(34) _
                                  & " /ppTemplateSlideID:" & ppTemplateSlideID _
                                  & " /ppInsertAfterSlide:" & ppInsertAfterSlide _ 
-                                 & " /safeJob:" & safeJob _
+                                 & " /safeJob:n" _
                                  & vbCrLf
         objFile.Close
     End If
