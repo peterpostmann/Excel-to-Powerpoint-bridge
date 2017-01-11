@@ -6,7 +6,7 @@
 ' This project is licensed under the terms of the MIT license
 '
 
-Dim ConsoleMode, colNamedArguments, safeJob, _ 
+Dim ConsoleMode, colNamedArguments, saveJob, _ 
 xlApp, xlBook, ppApp, ppPpt, ppFileName, _ 
 xlFileName, xlTargetSheetName, xlTargetSheet, xlHeaderRow, xlFirstDataRow, xlFirstCol, xlIndexName, _
 xlFirstCol_str, xlHeaderRow_str, xlFirstDataRow_str, ppTemplateSlideID_str, ppInsertAfterSlide_str, _
@@ -39,7 +39,7 @@ xlFirstDataRow_str     = colNamedArguments.Item("xlFirstDataRow")
 ppFileName             = colNamedArguments.Item("ppFileName")
 ppTemplateSlideID_str  = colNamedArguments.Item("ppTemplateSlideID")
 ppInsertAfterSlide_str = colNamedArguments.Item("ppInsertAfterSlide")
-safeJob                = colNamedArguments.Item("safeJob")
+saveJob                = colNamedArguments.Item("saveJob")
  
 Do
 
@@ -130,11 +130,11 @@ Do
     End If
     If ppInsertAfterSlide <= 0 Then Exit Do
     
-    If safeJob = "" Then        
-        safeJob = YesNoDialog("Safe Job?", "Safe Job")
+    If saveJob = "" Then        
+        saveJob = YesNoDialog("Save Job?", "Save Job")
     End If
     
-    If safeJob = "y" Then
+    If saveJob = "y" Then
     
         Set objFSO=CreateObject("Scripting.FileSystemObject")
 
@@ -150,7 +150,7 @@ Do
                                  & " /ppFileName:" & chr(34) & ppFileName & chr(34) _
                                  & " /ppTemplateSlideID:" & ppTemplateSlideID _
                                  & " /ppInsertAfterSlide:" & ppInsertAfterSlide _ 
-                                 & " /safeJob:n" _
+                                 & " /saveJob:n" _
                                  & vbCrLf
         objFile.Close
     End If
