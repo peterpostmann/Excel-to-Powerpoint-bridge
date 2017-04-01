@@ -135,24 +135,22 @@ Do
     End If
     
     If saveJob = "y" Then
+        
+        WriteUTF8WithoutBOM "@chcp 65001" & vbCrLf & _
+                            "wscript " & wscript.scriptname _
+                                      & " /xlFileName:" & chr(34) & xlFileName & chr(34) _
+                                      & " /xlTargetSheetName:" & chr(34) & xlTargetSheetName & chr(34) _
+                                      & " /xlFirstCol:" & xlFirstCol _
+                                      & " /xlHeaderRow:" & xlHeaderRow _
+                                      & " /xlFirstDataRow:" & xlFirstDataRow _
+                                      & " /ppFileName:" & chr(34) & ppFileName & chr(34) _
+                                      & " /ppTemplateSlideID:" & ppTemplateSlideID _
+                                      & " /ppInsertAfterSlide:" & ppInsertAfterSlide _ 
+                                      & " /saveJob:n" _
+                                      & vbCrLf, xlFileName & ".bat"
+        
     
-        Set objFSO=CreateObject("Scripting.FileSystemObject")
 
-        ' How to write file
-        outFile = xlFileName & ".bat"
-        Set objFile = objFSO.CreateTextFile(outFile,True)
-        objFile.Write "wscript " & wscript.scriptname _
-                                 & " /xlFileName:" & chr(34) & xlFileName & chr(34) _
-                                 & " /xlTargetSheetName:" & chr(34) & xlTargetSheetName & chr(34) _
-                                 & " /xlFirstCol:" & xlFirstCol _
-                                 & " /xlHeaderRow:" & xlHeaderRow _
-                                 & " /xlFirstDataRow:" & xlFirstDataRow _
-                                 & " /ppFileName:" & chr(34) & ppFileName & chr(34) _
-                                 & " /ppTemplateSlideID:" & ppTemplateSlideID _
-                                 & " /ppInsertAfterSlide:" & ppInsertAfterSlide _ 
-                                 & " /saveJob:n" _
-                                 & vbCrLf
-        objFile.Close
     End If
     
     ' Monitor updated SlideIndex: SlideIndex --> true/false
@@ -306,6 +304,42 @@ Set ppPpt  = Nothing
 Set ppApp  = Nothing
 
 WScript.Quit
+
+
+'
+' WriteUTF8WithoutBOM
+'
+' http://stackoverflow.com/questions/4143524/can-i-export-excel-data-with-utf-8-without-bom
+'
+Function WriteUTF8WithoutBOM(outText, outFile)
+
+    Dim UTFStream
+    Set UTFStream = CreateObject("adodb.stream")
+    UTFStream.Type = 2 'adTypeText
+    UTFStream.Mode = 3 'adModeReadWrite
+    UTFStream.Charset = "UTF-8"
+    UTFStream.Open
+    UTFStream.WriteText outText
+
+    UTFStream.Position = 3 'skip BOM
+
+    Dim BinaryStream
+    Set BinaryStream = CreateObject("adodb.stream")
+    BinaryStream.Type = 1 'adTypeBinary
+    BinaryStream.Mode = 3 'adModeReadWrite
+    BinaryStream.Open
+
+    'Strips BOM (first 3 bytes)
+    UTFStream.CopyTo BinaryStream
+
+    UTFStream.Flush
+    UTFStream.Close
+
+    BinaryStream.SaveToFile outFile, 2 'adSaveCreateOverWrite
+    BinaryStream.Flush
+    BinaryStream.Close
+    
+End Function
 
 '
 ' xlGetTargetSheet
